@@ -221,7 +221,8 @@
 }
 
 .roll-stage {
-  height: 74vh;
+  height: 46vh;
+  transform: translateY(-22%);
   perspective: 1200px;
   will-change: transform;
   filter: drop-shadow(0 0 70px oklch(0.72 0.17 62 / 35%));
@@ -229,8 +230,8 @@
 
 @media (min-width: 768px) {
   .roll-stage {
-    height: 86vh;
-    transform: translateX(14%);
+    height: 84vh;
+    transform: translateX(24%);
   }
 }
 
