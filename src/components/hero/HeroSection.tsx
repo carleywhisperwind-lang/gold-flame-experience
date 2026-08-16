@@ -216,8 +216,10 @@ export default function HeroSection() {
                 style={{
                   maskImage: biteMask(bites),
                   WebkitMaskImage: biteMask(bites),
-                  maskComposite: "intersect",
-                  WebkitMaskComposite: "source-in",
+                  maskSize: "100% 100%",
+                  WebkitMaskSize: "100% 100%",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskRepeat: "no-repeat",
                 }}
                 className="h-full w-auto object-contain drop-shadow-[0_45px_60px_rgba(0,0,0,0.75)] transition-[mask-image] duration-300"
               />
