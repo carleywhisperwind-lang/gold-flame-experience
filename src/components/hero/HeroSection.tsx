@@ -25,11 +25,12 @@ const STAGES = [
 
 /** Progressive bites taken out of the roll, one per scroll stage. */
 const BITES = [
-  { x: 63, y: 9, r: 9 },
-  { x: 37, y: 17, r: 10.5 },
-  { x: 66, y: 26, r: 12 },
-  { x: 41, y: 35, r: 13 },
+  { x: 57, y: 14, r: 7 },
+  { x: 45, y: 20, r: 7.5 },
+  { x: 58, y: 27, r: 8 },
+  { x: 47, y: 34, r: 8.5 },
 ];
+
 
 function biteMask(n: number) {
   if (n <= 0) return undefined;
