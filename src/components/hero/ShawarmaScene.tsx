@@ -87,7 +87,7 @@ function ExplodedLayers({ progress }: { progress: Progress }) {
     if (!group.current) return;
     const p = THREE.MathUtils.smoothstep(progress.current.v, 0.15, 0.85);
     group.current.children.forEach((c, i) => {
-      const it = items[i];
+      const it = items[i]!;
       const r = 0.9 + p * 2.6;
       c.position.set(Math.cos(it.a) * r, it.y + p * 0.3, Math.sin(it.a) * r);
       c.rotation.y = state.clock.elapsedTime * 0.3 * it.spin;
@@ -113,7 +113,7 @@ function ExplodedLayers({ progress }: { progress: Progress }) {
             <boxGeometry args={[0.3, 0.05, 0.22]} />
           )}
           <meshStandardMaterial
-            color={palette[it.kind]}
+            color={palette[it.kind]!}
             roughness={0.35}
             metalness={0.25}
             transparent
@@ -143,13 +143,14 @@ function Particles({ count = 420 }: { count?: number }) {
   useFrame((state, dt) => {
     const geo = ref.current?.geometry;
     if (!geo) return;
-    const arr = geo.attributes.position.array as Float32Array;
+    const attr = geo.attributes['position'] as THREE.BufferAttribute;
+    const arr = attr.array as Float32Array;
     for (let i = 0; i < count; i++) {
-      arr[i * 3 + 1] += speeds[i] * dt;
-      arr[i * 3] += Math.sin(state.clock.elapsedTime * 0.4 + i) * dt * 0.03;
-      if (arr[i * 3 + 1] > 3.6) arr[i * 3 + 1] = -3.6;
+      arr[i * 3 + 1] = arr[i * 3 + 1]! + speeds[i]! * dt;
+      arr[i * 3] = arr[i * 3]! + Math.sin(state.clock.elapsedTime * 0.4 + i) * dt * 0.03;
+      if (arr[i * 3 + 1]! > 3.6) arr[i * 3 + 1] = -3.6;
     }
-    geo.attributes.position.needsUpdate = true;
+    attr.needsUpdate = true;
   });
 
   return (
