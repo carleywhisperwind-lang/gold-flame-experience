@@ -23,12 +23,35 @@ const STAGES = [
   },
 ];
 
+/** Progressive bites taken out of the roll, one per scroll stage. */
+const BITES = [
+  { x: 63, y: 9, r: 9 },
+  { x: 37, y: 17, r: 10.5 },
+  { x: 66, y: 26, r: 12 },
+  { x: 41, y: 35, r: 13 },
+];
+
+function biteMask(n: number) {
+  if (n <= 0) return undefined;
+  return BITES.slice(0, n)
+    .map(
+      (b) =>
+        `radial-gradient(circle at ${b.x}% ${b.y}%, transparent 0 ${b.r}%, #000 ${b.r + 0.6}%)`,
+    )
+    .join(", ");
+}
+
 export default function HeroSection() {
   const progress = useRef({ v: 0, hover: 0 });
   const wrapper = useRef<HTMLDivElement>(null);
   const roll = useRef<HTMLDivElement>(null);
   const tilt = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const [ready, setReady] = useState(false);
+  const [bites, setBites] = useState(0);
+  const [crunch, setCrunch] = useState(0);
+  const [active, setActive] = useState(-1);
+  const biteRef = useRef(0);
+
 
   useEffect(() => {
     setReady(true);
