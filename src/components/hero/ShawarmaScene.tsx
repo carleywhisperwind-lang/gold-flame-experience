@@ -1,70 +1,9 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Float, ContactShadows } from "@react-three/drei";
+import { Environment, ContactShadows } from "@react-three/drei";
 import { useMemo, useRef, type MutableRefObject } from "react";
 import * as THREE from "three";
 
 type Progress = MutableRefObject<{ v: number; hover: number }>;
-
-/** Vertical rotisserie cone of stacked meat */
-function Spit({ progress }: { progress: Progress }) {
-  const group = useRef<THREE.Group>(null);
-  const slabs = useMemo(
-    () =>
-      Array.from({ length: 14 }, (_, i) => {
-        const t = i / 13;
-        return {
-          y: -1.5 + t * 3,
-          r: 0.95 - Math.abs(t - 0.35) * 0.75 - t * 0.15,
-          rot: i * 1.31,
-          tone: 0.35 + Math.random() * 0.35,
-          h: 0.24,
-        };
-      }),
-    [],
-  );
-
-  useFrame((state, dt) => {
-    if (!group.current) return;
-    const p = progress.current.v;
-    group.current.rotation.y += dt * (0.25 + p * 0.9);
-    group.current.position.y = Math.sin(state.clock.elapsedTime * 0.6) * 0.06 - p * 0.35;
-    const s = 0.92 - p * 0.18;
-    group.current.scale.setScalar(s);
-  });
-
-  return (
-    <group ref={group}>
-      {/* skewer */}
-      <mesh castShadow receiveShadow>
-        <cylinderGeometry args={[0.055, 0.055, 4.2, 24]} />
-        <meshStandardMaterial color="#8d8f96" metalness={1} roughness={0.22} />
-      </mesh>
-      {slabs.map((s, i) => (
-        <mesh
-          key={i}
-          position={[0, s.y, 0]}
-          rotation={[0, s.rot, 0]}
-          castShadow
-          receiveShadow
-        >
-          <cylinderGeometry args={[s.r, s.r * 0.94, s.h, 40, 1, false]} />
-          <meshStandardMaterial
-            color={new THREE.Color().setHSL(0.055, 0.62, 0.16 + s.tone * 0.14)}
-            roughness={0.55 - s.tone * 0.2}
-            metalness={0.15}
-            emissive="#4a1d05"
-            emissiveIntensity={0.18}
-          />
-        </mesh>
-      ))}
-      {/* charred top cap */}
-      <mesh position={[0, 1.62, 0]} castShadow>
-        <sphereGeometry args={[0.42, 32, 24]} />
-        <meshStandardMaterial color="#3a1a08" roughness={0.75} metalness={0.1} />
-      </mesh>
-    </group>
-  );
-}
 
 /** Ingredient layers that explode outward with scroll */
 function ExplodedLayers({ progress }: { progress: Progress }) {
@@ -235,9 +174,6 @@ export default function ShawarmaScene({ progress }: { progress: Progress }) {
     >
       <Rig progress={progress} />
       <Lights progress={progress} />
-      <Float speed={1.1} rotationIntensity={0.18} floatIntensity={0.4}>
-        <Spit progress={progress} />
-      </Float>
       <ExplodedLayers progress={progress} />
       <Particles />
       <ContactShadows

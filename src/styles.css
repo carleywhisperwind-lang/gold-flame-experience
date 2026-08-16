@@ -219,3 +219,38 @@
 @media (prefers-reduced-motion: reduce) {
   .reveal { animation: none; }
 }
+
+.roll-stage {
+  height: 32vh;
+  --base-x: 0%;
+  --base-y: -78%;
+  perspective: 1200px;
+  will-change: transform;
+  filter: drop-shadow(0 0 70px oklch(0.72 0.17 62 / 35%));
+}
+
+@media (min-width: 768px) {
+  .roll-stage {
+    height: 78vh;
+    --base-x: 42%;
+    --base-y: 0%;
+  }
+}
+
+.roll-inner {
+  height: 100%;
+  transform: translate(var(--base-x, 0%), var(--base-y, 0%))
+    translate3d(var(--shift-x, 0), var(--shift-y, 0), 0)
+    rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  animation: roll-float 7s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+@keyframes roll-float {
+  0%, 100% { translate: 0 -1.4%; }
+  50% { translate: 0 1.4%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-inner { animation: none; }
+}
