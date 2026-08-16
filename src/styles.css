@@ -221,8 +221,8 @@
 }
 
 .roll-stage {
-  height: 46vh;
-  transform: translateY(-22%);
+  height: 40vh;
+  transform: translateY(-52%);
   perspective: 1200px;
   will-change: transform;
   filter: drop-shadow(0 0 70px oklch(0.72 0.17 62 / 35%));
