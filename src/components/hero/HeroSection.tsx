@@ -277,16 +277,20 @@ export default function HeroSection() {
             }`}
           >
             <div
-              className={`glass max-w-md rounded-3xl p-8 md:col-span-5 ${
+              className={`glass stage-card max-w-md rounded-3xl p-8 md:col-span-5 ${
                 i % 2 ? "md:col-start-8" : ""
-              }`}
+              } ${active >= i ? "stage-card-active" : ""}`}
             >
-              <p className="text-[10px] tracking-[0.34em] text-primary uppercase">{s.tag}</p>
+              <p className="flex items-center gap-3 text-[10px] tracking-[0.34em] text-primary uppercase">
+                <span className={active >= i ? "flame-dot" : "flame-dot opacity-30"} aria-hidden />
+                {s.tag}
+              </p>
               <h2 className="mt-4 font-display text-3xl leading-tight text-foreground md:text-4xl">
                 {s.title}
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
             </div>
+
           </div>
         </section>
       ))}
