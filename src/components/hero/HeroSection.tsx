@@ -1,6 +1,7 @@
 import { ClientOnly } from "@tanstack/react-router";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import MagneticButton from "./MagneticButton";
+import rollImg from "@/assets/shawarma-roll.png";
 
 const ShawarmaScene = lazy(() => import("./ShawarmaScene"));
 
@@ -25,6 +26,8 @@ const STAGES = [
 export default function HeroSection() {
   const progress = useRef({ v: 0, hover: 0 });
   const wrapper = useRef<HTMLDivElement>(null);
+  const roll = useRef<HTMLDivElement>(null);
+  const tilt = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -51,6 +54,21 @@ export default function HeroSection() {
           },
         });
 
+        if (roll.current) {
+          gsap.to(roll.current, {
+            scale: 1.18,
+            yPercent: -6,
+            rotate: 8,
+            ease: "none",
+            scrollTrigger: {
+              trigger: wrapper.current!,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: true,
+            },
+          });
+        }
+
         gsap.utils.toArray<HTMLElement>("[data-stage]").forEach((el) => {
           gsap.fromTo(
             el,
@@ -71,8 +89,31 @@ export default function HeroSection() {
       }, wrapper);
     })();
 
+    const onMove = (e: PointerEvent) => {
+      tilt.current.tx = (e.clientX / window.innerWidth - 0.5) * 2;
+      tilt.current.ty = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    window.addEventListener("pointermove", onMove);
+
+    let raf = 0;
+    const loop = () => {
+      const t = tilt.current;
+      t.x += (t.tx - t.x) * 0.06;
+      t.y += (t.ty - t.y) * 0.06;
+      if (roll.current) {
+        roll.current.style.setProperty("--tilt-y", `${t.x * 10}deg`);
+        roll.current.style.setProperty("--tilt-x", `${-t.y * 7}deg`);
+        roll.current.style.setProperty("--shift-x", `${t.x * 16}px`);
+        roll.current.style.setProperty("--shift-y", `${t.y * 12}px`);
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+
     return () => {
       cancelled = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
       ctx?.revert();
     };
   }, []);
@@ -91,7 +132,20 @@ export default function HeroSection() {
             </ClientOnly>
           )}
         </div>
-        <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_50%,transparent_40%,var(--color-background)_100%)]" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div ref={roll} className="roll-stage">
+            <div className="roll-inner">
+              <img
+                src={rollImg}
+                alt="Gold Flame chicken shawarma roll in a paper wrap"
+                width={1024}
+                height={1536}
+                className="h-full w-auto object-contain drop-shadow-[0_45px_60px_rgba(0,0,0,0.75)]"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_50%,transparent_40%,var(--color-background)_100%)] opacity-70" />
         <div className="noise absolute inset-0" />
       </div>
 
