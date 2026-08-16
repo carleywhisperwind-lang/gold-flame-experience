@@ -192,7 +192,7 @@ export default function HeroSection() {
               <span className="reveal reveal-4 block">FLAVOR</span>
             </h1>
           </div>
-          <div className="reveal reveal-5 md:col-span-5 md:pb-4">
+          <div className="reveal reveal-5 md:col-span-6 md:col-start-1 md:pb-4">
             <p className="max-w-sm text-sm leading-relaxed tracking-[0.14em] text-muted-foreground uppercase">
               Crafted over fire. Wrapped with perfection. Served with obsession.
             </p>
