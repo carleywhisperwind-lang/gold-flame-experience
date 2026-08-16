@@ -23,12 +23,36 @@ const STAGES = [
   },
 ];
 
+/** Progressive bites taken out of the roll, one per scroll stage. */
+const BITES = [
+  { x: 57, y: 14, r: 7 },
+  { x: 45, y: 20, r: 7.5 },
+  { x: 58, y: 27, r: 8 },
+  { x: 47, y: 34, r: 8.5 },
+];
+
+
+function biteMask(n: number) {
+  if (n <= 0) return undefined;
+  return BITES.slice(0, n)
+    .map(
+      (b) =>
+        `radial-gradient(circle at ${b.x}% ${b.y}%, transparent 0 ${b.r}%, #000 ${b.r + 0.6}%)`,
+    )
+    .join(", ");
+}
+
 export default function HeroSection() {
   const progress = useRef({ v: 0, hover: 0 });
   const wrapper = useRef<HTMLDivElement>(null);
   const roll = useRef<HTMLDivElement>(null);
   const tilt = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const [ready, setReady] = useState(false);
+  const [bites, setBites] = useState(0);
+  const [crunch, setCrunch] = useState(0);
+  const [active, setActive] = useState(-1);
+  const biteRef = useRef(0);
+
 
   useEffect(() => {
     setReady(true);
@@ -51,7 +75,19 @@ export default function HeroSection() {
           scrub: true,
           onUpdate: (self) => {
             progress.current.v = self.progress;
+            const n = Math.min(
+              BITES.length,
+              Math.floor(self.progress * (BITES.length + 0.35)),
+            );
+            if (n !== biteRef.current) {
+              const bitten = n > biteRef.current;
+              biteRef.current = n;
+              setBites(n);
+              setActive(n - 1);
+              if (bitten) setCrunch((c) => c + 1);
+            }
           },
+
         });
 
         if (roll.current) {
@@ -118,6 +154,18 @@ export default function HeroSection() {
     };
   }, []);
 
+  // crunch shake whenever a new bite lands
+  useEffect(() => {
+    if (!crunch || !roll.current) return;
+    const el = roll.current;
+    el.classList.remove("crunching");
+    void el.offsetWidth;
+    el.classList.add("crunching");
+    const id = window.setTimeout(() => el.classList.remove("crunching"), 520);
+    return () => window.clearTimeout(id);
+  }, [crunch]);
+
+
   return (
     <div ref={wrapper} className="relative bg-background">
       {/* fixed canvas layer */}
@@ -140,9 +188,16 @@ export default function HeroSection() {
                 alt="Gold Flame chicken shawarma roll in a paper wrap"
                 width={1024}
                 height={1536}
-                className="h-full w-auto object-contain drop-shadow-[0_45px_60px_rgba(0,0,0,0.75)]"
+                style={{
+                  maskImage: biteMask(bites),
+                  WebkitMaskImage: biteMask(bites),
+                  maskComposite: "intersect",
+                  WebkitMaskComposite: "source-in",
+                }}
+                className="h-full w-auto object-contain drop-shadow-[0_45px_60px_rgba(0,0,0,0.75)] transition-[mask-image] duration-300"
               />
             </div>
+
           </div>
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_50%,transparent_40%,var(--color-background)_100%)] opacity-70" />
@@ -223,16 +278,20 @@ export default function HeroSection() {
             }`}
           >
             <div
-              className={`glass max-w-md rounded-3xl p-8 md:col-span-5 ${
+              className={`glass stage-card max-w-md rounded-3xl p-8 md:col-span-5 ${
                 i % 2 ? "md:col-start-8" : ""
-              }`}
+              } ${active >= i ? "stage-card-active" : ""}`}
             >
-              <p className="text-[10px] tracking-[0.34em] text-primary uppercase">{s.tag}</p>
+              <p className="flex items-center gap-3 text-[10px] tracking-[0.34em] text-primary uppercase">
+                <span className={active >= i ? "flame-dot" : "flame-dot opacity-30"} aria-hidden />
+                {s.tag}
+              </p>
               <h2 className="mt-4 font-display text-3xl leading-tight text-foreground md:text-4xl">
                 {s.title}
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
             </div>
+
           </div>
         </section>
       ))}
