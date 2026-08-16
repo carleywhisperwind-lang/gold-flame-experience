@@ -254,3 +254,38 @@
 @media (prefers-reduced-motion: reduce) {
   .roll-inner { animation: none; }
 }
+
+@keyframes crunch-shake {
+  0%   { transform: scale(1) rotate(0deg); }
+  18%  { transform: scale(0.955) rotate(-2.4deg); }
+  36%  { transform: scale(1.045) rotate(2deg); }
+  56%  { transform: scale(0.985) rotate(-1.1deg); }
+  78%  { transform: scale(1.015) rotate(0.6deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.roll-stage.crunching {
+  animation: crunch-shake 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 0 90px oklch(0.78 0.19 62 / 55%));
+}
+
+.stage-card {
+  opacity: 0.55;
+  transform: translateY(10px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s ease;
+}
+
+.stage-card-active {
+  opacity: 1;
+  transform: translateY(0);
+  box-shadow: var(--glow-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-stage.crunching { animation: none; }
+  .stage-card { transition: none; }
+}
+
