@@ -100,17 +100,18 @@ export default function HeroSection() {
           scrub: true,
           onUpdate: (self) => {
             progress.current.v = self.progress;
-            const n = Math.min(
+            const stage = Math.min(
               BITES.length,
               Math.floor(self.progress * (BITES.length + 0.35)),
             );
+            // bites are cumulative and never restored on scroll-up
+            const n = Math.max(stage, biteRef.current);
             if (n !== biteRef.current) {
-              const bitten = n > biteRef.current;
               biteRef.current = n;
               setBites(n);
-              setActive(n - 1);
-              if (bitten) setCrunch((c) => c + 1);
+              setCrunch((c) => c + 1);
             }
+            setActive(stage - 1);
           },
 
         });
