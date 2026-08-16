@@ -153,6 +153,18 @@ export default function HeroSection() {
     };
   }, []);
 
+  // crunch shake whenever a new bite lands
+  useEffect(() => {
+    if (!crunch || !roll.current) return;
+    const el = roll.current;
+    el.classList.remove("crunching");
+    void el.offsetWidth;
+    el.classList.add("crunching");
+    const id = window.setTimeout(() => el.classList.remove("crunching"), 520);
+    return () => window.clearTimeout(id);
+  }, [crunch]);
+
+
   return (
     <div ref={wrapper} className="relative bg-background">
       {/* fixed canvas layer */}
