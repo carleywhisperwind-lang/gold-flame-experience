@@ -187,9 +187,16 @@ export default function HeroSection() {
                 alt="Gold Flame chicken shawarma roll in a paper wrap"
                 width={1024}
                 height={1536}
-                className="h-full w-auto object-contain drop-shadow-[0_45px_60px_rgba(0,0,0,0.75)]"
+                style={{
+                  maskImage: biteMask(bites),
+                  WebkitMaskImage: biteMask(bites),
+                  maskComposite: "intersect",
+                  WebkitMaskComposite: "source-in",
+                }}
+                className="h-full w-auto object-contain drop-shadow-[0_45px_60px_rgba(0,0,0,0.75)] transition-[mask-image] duration-300"
               />
             </div>
+
           </div>
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_50%,transparent_40%,var(--color-background)_100%)] opacity-70" />
