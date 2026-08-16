@@ -23,24 +23,49 @@ const STAGES = [
   },
 ];
 
-/** Progressive bites taken out of the roll, one per scroll stage. */
+/**
+ * Progressive bites taken out of the roll, one per scroll stage.
+ * Each bite is an irregular crescent with tooth scallops along its rim,
+ * rendered into a single cumulative SVG mask so earlier bites persist.
+ */
 const BITES = [
-  { x: 57, y: 14, r: 7 },
-  { x: 45, y: 20, r: 7.5 },
-  { x: 58, y: 27, r: 8 },
-  { x: 47, y: 34, r: 8.5 },
+  { x: 60, y: 13, r: 8, rot: -18, seed: 1 },
+  { x: 43, y: 20, r: 8.6, rot: 24, seed: 2 },
+  { x: 59, y: 28, r: 9.2, rot: -8, seed: 3 },
+  { x: 45, y: 36, r: 9.8, rot: 14, seed: 4 },
 ];
 
+/** Deterministic pseudo-random in [0,1). */
+function rnd(seed: number, i: number) {
+  const s = Math.sin(seed * 374.761 + i * 91.317) * 43758.5453;
+  return s - Math.floor(s);
+}
+
+/** One bite: a ragged mouth-shaped hole with tooth scallops on the rim. */
+function bitePath(b: (typeof BITES)[number]) {
+  const teeth = 9;
+  const pts: string[] = [];
+  // ragged outer arc (the torn crust edge)
+  for (let i = 0; i <= teeth; i++) {
+    const t = i / teeth;
+    const a = (-Math.PI * 0.98 + Math.PI * 1.96 * t) + (b.rot * Math.PI) / 180;
+    const wobble = 0.78 + rnd(b.seed, i) * 0.34;
+    const scallop = i % 2 === 0 ? 1 : 0.72; // tooth marks
+    const rad = b.r * wobble * scallop;
+    const px = b.x + Math.cos(a) * rad;
+    const py = b.y + Math.sin(a) * rad * 0.92;
+    pts.push(`${px.toFixed(2)},${py.toFixed(2)}`);
+  }
+  return `<polygon points="${pts.join(" ")}" fill="black"/>`;
+}
 
 function biteMask(n: number) {
   if (n <= 0) return undefined;
-  return BITES.slice(0, n)
-    .map(
-      (b) =>
-        `radial-gradient(circle at ${b.x}% ${b.y}%, transparent 0 ${b.r}%, #000 ${b.r + 0.6}%)`,
-    )
-    .join(", ");
+  const shapes = BITES.slice(0, n).map(bitePath).join("");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><rect width="100" height="100" fill="white"/>${shapes}</svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 }
+
 
 export default function HeroSection() {
   const progress = useRef({ v: 0, hover: 0 });
