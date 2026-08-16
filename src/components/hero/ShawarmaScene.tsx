@@ -28,7 +28,7 @@ function Spit({ progress }: { progress: Progress }) {
     const p = progress.current.v;
     group.current.rotation.y += dt * (0.25 + p * 0.9);
     group.current.position.y = Math.sin(state.clock.elapsedTime * 0.6) * 0.06 - p * 0.35;
-    const s = 1 - p * 0.18;
+    const s = 0.92 - p * 0.18;
     group.current.scale.setScalar(s);
   });
 
@@ -180,7 +180,7 @@ function Rig({ progress }: { progress: Progress }) {
     const mobile = viewport.width < 6;
     const baseZ = mobile ? 8.4 : 6.6;
     target.current.set(
-      pointer.x * 0.55 + (mobile ? 0 : p * 1.1),
+      pointer.x * 0.55 + (mobile ? 0 : -0.85 + p * 1.6),
       pointer.y * 0.35 + 0.2 - p * 0.5,
       baseZ - p * 2.4,
     );
