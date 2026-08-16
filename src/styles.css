@@ -222,7 +222,8 @@
 
 .roll-stage {
   height: 40vh;
-  transform: translateY(-52%);
+  --base-x: 0%;
+  --base-y: -50%;
   perspective: 1200px;
   will-change: transform;
   filter: drop-shadow(0 0 70px oklch(0.72 0.17 62 / 35%));
@@ -231,13 +232,15 @@
 @media (min-width: 768px) {
   .roll-stage {
     height: 84vh;
-    transform: translateX(24%);
+    --base-x: 24%;
+    --base-y: 0%;
   }
 }
 
 .roll-inner {
   height: 100%;
-  transform: translate3d(var(--shift-x, 0), var(--shift-y, 0), 0)
+  transform: translate(var(--base-x, 0%), var(--base-y, 0%))
+    translate3d(var(--shift-x, 0), var(--shift-y, 0), 0)
     rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   animation: roll-float 7s ease-in-out infinite;
   transform-style: preserve-3d;
