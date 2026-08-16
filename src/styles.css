@@ -221,9 +221,9 @@
 }
 
 .roll-stage {
-  height: 30vh;
+  height: 32vh;
   --base-x: 0%;
-  --base-y: -105%;
+  --base-y: -78%;
   perspective: 1200px;
   will-change: transform;
   filter: drop-shadow(0 0 70px oklch(0.72 0.17 62 / 35%));
