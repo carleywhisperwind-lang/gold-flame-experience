@@ -74,7 +74,19 @@ export default function HeroSection() {
           scrub: true,
           onUpdate: (self) => {
             progress.current.v = self.progress;
+            const n = Math.min(
+              BITES.length,
+              Math.floor(self.progress * (BITES.length + 0.35)),
+            );
+            if (n !== biteRef.current) {
+              const bitten = n > biteRef.current;
+              biteRef.current = n;
+              setBites(n);
+              setActive(n - 1);
+              if (bitten) setCrunch((c) => c + 1);
+            }
           },
+
         });
 
         if (roll.current) {
